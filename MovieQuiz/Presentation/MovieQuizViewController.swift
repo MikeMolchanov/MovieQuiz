@@ -1,7 +1,7 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController {
-    struct QuizQuestion {
+    private struct QuizQuestion {
         // строка с названием фильма,
         // совпадает с названием картинки афиши фильма в Assets
         let image: String
@@ -56,7 +56,7 @@ final class MovieQuizViewController: UIViewController {
     ]
     
     // вью модель для состояния "Вопрос показан"
-    struct QuizStepViewModel {
+    private struct QuizStepViewModel {
         // картинка с афишей фильма с типом UIImage
         let image: UIImage
         // вопрос о рейтинге квиза
@@ -65,7 +65,7 @@ final class MovieQuizViewController: UIViewController {
         let questionNumber: String
     }
     // для состояния "Результат квиза"
-    struct QuizResultsViewModel {
+    private struct QuizResultsViewModel {
         // строка с заголовком алерта
         let title: String
         // строка с текстом о количестве набранных очков
@@ -86,8 +86,10 @@ final class MovieQuizViewController: UIViewController {
     // приватный метод вывода на экран вопроса, который принимает на вход вью модель вопроса и ничего не возвращает
     private func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
+        imageView.layer.borderWidth = 0
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
+        yesButton.isEnabled = true
     }
     // приватный метод, который меняет цвет рамки
     // принимает на вход булевое значение и ничего не возвращает
@@ -98,11 +100,13 @@ final class MovieQuizViewController: UIViewController {
             imageView.layer.borderWidth = 8
             imageView.layer.borderColor = UIColor.ypGreen.cgColor
             imageView.layer.cornerRadius = 20
+            yesButton.isEnabled = false
         }
         else {
             imageView.layer.borderWidth = 8
             imageView.layer.borderColor = UIColor.ypRed.cgColor
             imageView.layer.cornerRadius = 20
+            yesButton.isEnabled = false
         }
         // запускаем задачу через 1 секунду c помощью диспетчера задач
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -121,17 +125,13 @@ final class MovieQuizViewController: UIViewController {
                 text: text,
                 buttonText: "Сыграть ещё раз")
             show(quiz: viewModel) // 3
-            imageView.layer.borderWidth = 1
-            imageView.layer.borderColor = UIColor.white.cgColor
-            imageView.layer.cornerRadius = 6
+            imageView.layer.cornerRadius = 20
         } else { // 2
             currentQuestionIndex += 1
             // идём в состояние "Вопрос показан"
             let nextQuestion = questions[currentQuestionIndex]
             let viewModel = convert(model: nextQuestion)
-            imageView.layer.borderWidth = 1
-            imageView.layer.borderColor = UIColor.white.cgColor
-            imageView.layer.cornerRadius = 6
+            imageView.layer.cornerRadius = 20
             
             show(quiz: viewModel)
             
@@ -143,7 +143,8 @@ final class MovieQuizViewController: UIViewController {
         let alert = UIAlertController(
             title: result.title,
             message: result.text,
-            preferredStyle: .alert)
+            preferredStyle: .alert
+        )
         
         let action = UIAlertAction(title: result.buttonText, style: .default) { _ in
             self.currentQuestionIndex = 0
@@ -187,10 +188,8 @@ final class MovieQuizViewController: UIViewController {
         yesButton.layer.cornerRadius = 15
         noButton.clipsToBounds = true // разрешает обрезать вью по маске
         yesButton.clipsToBounds = true
+        imageView.layer.cornerRadius = 20
         imageView.layer.masksToBounds = true // даём разрешение на рисование рамки
-        imageView.layer.borderWidth = 1 // толщина рамки
-        imageView.layer.borderColor = UIColor.white.cgColor // делаем рамку белой
-        imageView.layer.cornerRadius = 6 // радиус скругления углов рамки
         show(quiz: questionStep)
         
         
