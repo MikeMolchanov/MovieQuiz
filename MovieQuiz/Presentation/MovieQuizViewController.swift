@@ -10,8 +10,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     
-    weak var delegate: AlertPresenterDelegate?
+    private let alertPresenter: AlertPresenterProtocol = AlertPresenter()
     
+    private let statisticService: StatisticServiceProtocol = StatisticService()
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(image: UIImage(named: model.image) ?? UIImage(), question: model.text, questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
@@ -53,24 +54,28 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     // метод ничего не принимает и ничего не возвращает
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
-            let text = correctAnswers == questionsAmount ?
-            "Поздравляем, вы ответили на 10 из 10!" :
-            "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!"
-            let viewModel = AlertModel(
-                title: "Этот раунд окончен!",
-                message: text,
-                buttonText: "Сыграть ещё раз",
-                completion: (UIAlertAction) -> Void = { [weak self] _ in
-                    guard let self = self else { return }
-                    self.currentQuestionIndex = 0
-                    self.correctAnswers = 0
-                    
-                    guard let questionFactory = self.questionFactory else {
-                        return
-                    }
-                    questionFactory.requestNextQuestion()
+            let message = correctAnswers == questionsAmount ?
+            "Ваш результат: \(correctAnswers)/10 " :
+            "Количество сыгранных квизов: \(statisticService.gamesCount)n" +
+            "Рекорд: \(statisticService.bestGame.correct)/10 (\(statisticService.bestGame.date))n" +
+            "Средняя точность: \(statisticService.totalAccuracy)"
+           let alertModel = AlertModel(
+            title: "Этот раунд окончен!",
+            message: message,
+            buttonText: "Сыграть ещё раз",
+            completion: {[weak self] _ in
+                guard let self = self else { return }
+                self.currentQuestionIndex = 0
+                self.correctAnswers = 0
+                
+                guard let questionFactory = self.questionFactory else {
+                    return
                 }
-                delegate?.show(quiz: viewModel)
+                questionFactory.requestNextQuestion()
+            }
+           )
+            alertPresenter.show(alertModel)
+
             imageView.layer.cornerRadius = 20
         }
         else {
@@ -93,7 +98,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         )
         
         let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in // слабая ссылка на self
-            guard let self = self else { return } // разворачиваем слабую ссылку
+            guard let self = self else { return } 
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
             guard let questionFactory = questionFactory else {
@@ -140,16 +145,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         
         questionFactory.requestNextQuestion()
         
+        alertPresenter.delegate = self
         
-        
+        var gameResult = GameResult(correct: <#T##Int#>, total: <#T##Int#>, date: <#T##Date#>)
+
         noButton.layer.cornerRadius = 15
         yesButton.layer.cornerRadius = 15
         noButton.clipsToBounds = true // разрешает обрезать вью по маске
         yesButton.clipsToBounds = true
         imageView.layer.cornerRadius = 20
         imageView.layer.masksToBounds = true // даём разрешение на рисование рамки
-        
-        
     }
     // MARK: - QuestionFactoryDelegate
     func didReceiveNextQuestion(question: QuizQuestion?) {
@@ -163,4 +168,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
             self?.show(quiz: viewModel)
         }
     }
+}
+
+extension MovieQuizViewController: AlertPresenterDelegate {
+    func show(alertVC: UIAlertController) {
+        present(alertVC, animated: true)
+    }
+    
+    
 }

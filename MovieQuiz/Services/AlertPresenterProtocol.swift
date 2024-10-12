@@ -6,6 +6,8 @@
 //
 
 import Foundation
-protocol AlertPresenterProtocol {
-    func show(quiz result: AlertModel)
+protocol AlertPresenterProtocol: AnyObject {
+    var delegate: AlertPresenterDelegate? {get set}
+    
+    func show(_ result: AlertModel)
 }

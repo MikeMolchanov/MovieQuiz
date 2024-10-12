@@ -5,8 +5,8 @@
 //  Created by Михаил on 21.09.2024.
 //
 
-import Foundation
+import UIKit
 
 protocol AlertPresenterDelegate: AnyObject {
-    func show(quiz result: AlertModel)
+    func show( alertVC: UIAlertController)
 }

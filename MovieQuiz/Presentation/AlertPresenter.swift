@@ -7,27 +7,26 @@
 
 import UIKit
 
-class AlertPresenter: UIViewController, AlertPresenterProtocol  {
+class AlertPresenter: AlertPresenterProtocol  {
+    
+    weak var delegate: AlertPresenterDelegate?
+    
     private var questionFactory: QuestionFactoryProtocol?
-    func show(quiz result: AlertModel) {
+    func show(_ model: AlertModel) {
         let alert = UIAlertController(
-            title: result.title,
-            message: result.message,
+            title: model.title,
+            message: model.message,
             preferredStyle: .alert
         )
         
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in // слабая ссылка на self
-            guard let self = self else { return } // разворачиваем слабую ссылку
-            MovieQuizViewController.currentQuestionIndex = 0
-            MovieQuizViewController.correctAnswers = 0
-            guard let questionFactory = questionFactory else {
-                return
-            }
-            questionFactory.requestNextQuestion()
-        }
+        alert.addAction(
+            UIAlertAction(
+                title: model.buttonText,
+                style: .default,
+                handler: model.completion
+            )
+        )
         
-        alert.addAction(action)
-        
-        self.present(alert, animated: true, completion: nil)
+        delegate?.show(alertVC: alert)
     }
 }
