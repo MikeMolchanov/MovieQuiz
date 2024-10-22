@@ -54,11 +54,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     // метод ничего не принимает и ничего не возвращает
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
-            let message = correctAnswers == questionsAmount ?
-            "Ваш результат: \(correctAnswers)/10 " :
-            "Количество сыгранных квизов: \(statisticService.gamesCount)n" +
-            "Рекорд: \(statisticService.bestGame.correct)/10 (\(statisticService.bestGame.date))n" +
-            "Средняя точность: \(statisticService.totalAccuracy)"
+            let currentDate = Date()
+            let gameResult = GameResult(correct: correctAnswers, total: 10, date: currentDate.dateTimeString)
+            statisticService.store(my: gameResult)
+            let message = "Ваш результат: \(correctAnswers)/10 \n" +
+            "Количество сыгранных квизов: \(statisticService.gamesCount)\n" +
+            "Рекорд: \(statisticService.bestGame.correct)/10 (\(statisticService.bestGame.date))\n" +
+            "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
            let alertModel = AlertModel(
             title: "Этот раунд окончен!",
             message: message,
@@ -146,8 +148,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         questionFactory.requestNextQuestion()
         
         alertPresenter.delegate = self
-        
-        var gameResult = GameResult(correct: <#T##Int#>, total: <#T##Int#>, date: <#T##Date#>)
 
         noButton.layer.cornerRadius = 15
         yesButton.layer.cornerRadius = 15

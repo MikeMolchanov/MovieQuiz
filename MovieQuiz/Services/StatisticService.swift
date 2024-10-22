@@ -25,16 +25,16 @@ final class StatisticService: StatisticServiceProtocol {
     
     var bestGame: GameResult {
         get {
-            var correct: Int = storage.integer(forKey: Keys.correct.rawValue)
-            var total: Int = storage.integer(forKey: "total")
-            var date: Date = storage.object(forKey: "date") as? Date ?? Date()
-            var bestGame = GameResult(correct: correct, total: total, date: date)
+            let correct: Int = storage.integer(forKey: Keys.correct.rawValue)
+            let total: Int = storage.integer(forKey: "total")
+            let date: Date = storage.object(forKey: "date") as? Date ?? Date()
+                    
+            return GameResult(correct: correct, total: total, date: date.dateTimeString)
         }
         set {
-            var correct: Void = storage.set(newValue, forKey: Keys.correct.rawValue)
-            var total: Void = storage.set(newValue, forKey: "total")
-            var date: Date = storage.set(newValue, forKey: "date") as? Date ?? Date()
-            var bestGame = GameResult(correct: correct, total: total, date: date)
+            storage.set(newValue.correct, forKey: Keys.correct.rawValue)
+            storage.set(newValue.total, forKey: "total")
+            storage.set(newValue.date, forKey: "date") 
         }
     }
     
@@ -49,16 +49,16 @@ final class StatisticService: StatisticServiceProtocol {
             guard gamesCount > 0 else {
                 return 0
             }
-            return Double(storage.integer(forKey: "correctAnswers")) * 100 / Double(gamesCount) * 10
+            return Double(storage.integer(forKey: "correctAnswers")) * 100 / Double(gamesCount) 
         }
     }
     
-    func store(correct count: Int, total amount: Int) {
+    func store(my: GameResult) {
         
         gamesCount += 1
-        storage.set( count , forKey: "correctAnswers")
+        storage.set( my.correct , forKey: "correctAnswers")
         
-        GameResult.isBetterThan(bestGame)
+        my.isBetterThan(another: bestGame, statisticServiceInstance: self)
     }
 }
 

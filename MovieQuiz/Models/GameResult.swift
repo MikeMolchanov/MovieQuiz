@@ -7,14 +7,15 @@
 
 import Foundation
 struct GameResult {
-    let correct: Int
-    let total: Int //количество вопросов квиза
-    let date: Date
+    var correct: Int
+    var total: Int //количество вопросов квиза
+    var date: String
     
-    func isBetterThan(another:GameResult) {
-        if correct > another.correct {
-            StatisticService.bestGame.correct = correct
-            StatisticService.bestGame.date = Date()
+    func isBetterThan(another:GameResult, statisticServiceInstance: StatisticService ) {
+        if self.correct > another.correct {
+            statisticServiceInstance.bestGame.correct = self.correct
+            let currentDate = Date()
+            statisticServiceInstance.bestGame.date = currentDate.dateTimeString
         }
     }
 }
