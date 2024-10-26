@@ -79,6 +79,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
             alertPresenter.show(alertModel)
 
             imageView.layer.cornerRadius = 20
+            
         }
         else {
             currentQuestionIndex += 1
