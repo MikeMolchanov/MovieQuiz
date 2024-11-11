@@ -2,9 +2,7 @@ import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  {
     
-    // переменная со счётчиком правильных ответов, начальное значение закономерно 0
     private var correctAnswers = 0
-    // переменная с индексом текущего вопроса, начальное значение 0 (так как индекс в массиве начинается с 0)
     private var currentQuestionIndex = 0
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
@@ -36,7 +34,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         
         let model = AlertModel(title: "Ошибка",
                                message: message,
-                               buttonText: "Попробовать еще раз") { [weak self] in 
+                               buttonText: "Попробовать еще раз") { [weak self] _ in 
                 guard let self = self else { return }
                 
                 self.currentQuestionIndex = 0
@@ -136,7 +134,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
             preferredStyle: .alert
         )
         
-        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in // слабая ссылка на self
+        let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in 
             guard let self = self else { return } 
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
