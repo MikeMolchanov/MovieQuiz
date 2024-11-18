@@ -57,7 +57,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     }
     // приватный метод, который меняет цвет рамки
     // принимает на вход булевое значение и ничего не возвращает
-    private func showAnswerResult(isCorrect: Bool) {
+    func showAnswerResult(isCorrect: Bool) {
         // метод красит рамку
         if isCorrect == true {
             correctAnswers += 1
@@ -144,21 +144,13 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         self.present(alert, animated: true, completion: nil)
     }
     
-    @IBAction private func noButtonClicked(_ sender: Any) {
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        let givenAnswer = false
-        
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+    @IBAction private func noButtonClicked(_ sender: UIButton) {
+        presenter.currentQuestion = currentQuestion
+        presenter.noButtonClicked()
     }
-    @IBAction private func yesButtonClicked(_ sender: Any) {
-        guard let currentQuestion = currentQuestion else {
-            return
-        }
-        let givenAnswer = true
-        
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+    @IBAction private func yesButtonClicked(_ sender: UIButton) {
+            presenter.currentQuestion = currentQuestion
+            presenter.yesButtonClicked()
     }
     
     @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
@@ -173,6 +165,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     override func viewDidLoad() {
         super.viewDidLoad()
         let questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        presenter.viewController = self
         questionFactory.delegate = self //?
         self.questionFactory = questionFactory //?
         
