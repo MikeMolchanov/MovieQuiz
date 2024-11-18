@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8793F67E2CEBBA8F007C40D1 /* MovieQuizPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8793F67D2CEBBA8F007C40D1 /* MovieQuizPresenter.swift */; };
 		87D63A752CE0E2690046C2F0 /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D63A742CE0E2690046C2F0 /* NetworkClient.swift */; };
 		87D63A772CE0EE250046C2F0 /* MostPopularMovies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D63A762CE0EE250046C2F0 /* MostPopularMovies.swift */; };
 		87D63A792CE0EF730046C2F0 /* MoviesLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D63A782CE0EF730046C2F0 /* MoviesLoader.swift */; };
@@ -57,6 +58,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8793F67D2CEBBA8F007C40D1 /* MovieQuizPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuizPresenter.swift; sourceTree = "<group>"; };
+		87BB3C4A2CE8C85F0026FF5D /* MovieQuiz.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = MovieQuiz.xctestplan; sourceTree = "<group>"; };
 		87D63A742CE0E2690046C2F0 /* NetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
 		87D63A762CE0EE250046C2F0 /* MostPopularMovies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MostPopularMovies.swift; sourceTree = "<group>"; };
 		87D63A782CE0EF730046C2F0 /* MoviesLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesLoader.swift; sourceTree = "<group>"; };
@@ -170,6 +173,7 @@
 				AD1ABAB52831907B00B3E448 /* MovieQuizViewController.swift */,
 				AD1ABAB72831907B00B3E448 /* Main.storyboard */,
 				87EE1C0E2C9EF1E600649567 /* AlertPresenter.swift */,
+				8793F67D2CEBBA8F007C40D1 /* MovieQuizPresenter.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -189,6 +193,7 @@
 		AD1ABAA52831907B00B3E448 = {
 			isa = PBXGroup;
 			children = (
+				87BB3C4A2CE8C85F0026FF5D /* MovieQuiz.xctestplan */,
 				AD1ABAB02831907B00B3E448 /* MovieQuiz */,
 				87D63A7F2CE28D6E0046C2F0 /* MovieQuizTests */,
 				87D63A902CE685AF0046C2F0 /* MovieQuizUITests */,
@@ -393,6 +398,7 @@
 				87E857DC2C922E7B003A4A96 /* QuestionFactoryDelegate.swift in Sources */,
 				AD1ABAB62831907B00B3E448 /* MovieQuizViewController.swift in Sources */,
 				87D63A752CE0E2690046C2F0 /* NetworkClient.swift in Sources */,
+				8793F67E2CEBBA8F007C40D1 /* MovieQuizPresenter.swift in Sources */,
 				87E857D42C8CBA87003A4A96 /* QuizStepViewModel.swift in Sources */,
 				87E857D82C8CBB6A003A4A96 /* QuizQuestion.swift in Sources */,
 				87EE1C392CB2A50900649567 /* StatisticService.swift in Sources */,
