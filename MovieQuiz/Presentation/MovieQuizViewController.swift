@@ -3,7 +3,6 @@ import UIKit
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  {
     
     private let presenter = MovieQuizPresenter()
-    private var correctAnswers = 0
     
     
     private var questionFactory: QuestionFactoryProtocol?
@@ -38,8 +37,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
                                buttonText: "Попробовать еще раз") { [weak self] _ in 
                 guard let self = self else { return }
                 
-                self.presenter.resetQuestionIndex()
-                self.correctAnswers = 0
+                self.presenter.restartGame()
                 
                 self.questionFactory?.requestNextQuestion()
         }
@@ -48,7 +46,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     }
     
     // приватный метод вывода на экран вопроса, который принимает на вход вью модель вопроса и ничего не возвращает
-    func show(quiz step: QuizStepViewModel) {
+    func show(step: QuizStepViewModel) {
         imageView.image = step.image
         imageView.layer.borderWidth = 0
         textLabel.text = step.question
@@ -60,7 +58,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     func showAnswerResult(isCorrect: Bool) {
         // метод красит рамку
         if isCorrect == true {
-            correctAnswers += 1
+            presenter.didAnswer(isCorrectAnswer: isCorrect)
             imageView.layer.borderWidth = 8
             imageView.layer.borderColor = UIColor.ypGreen.cgColor
             imageView.layer.cornerRadius = 20
@@ -76,7 +74,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in // слабая ссылка на self
             guard let self = self else { return } // разворачиваем слабую ссылку
             // код, который мы хотим вызвать через 1 секунду
-            self.presenter.correctAnswers = self.correctAnswers
             self.presenter.questionFactory = self.questionFactory
             self.presenter.showNextQuestionOrResults()
         }
@@ -86,9 +83,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     private func showNextQuestionOrResults() {
         if presenter.isLastQuestion() {
             let currentDate = Date()
-            let gameResult = GameResult(correct: correctAnswers, total: presenter.questionsAmount, date: currentDate.dateTimeString)
+            let gameResult = GameResult(correct: presenter.correctAnswers, total: presenter.questionsAmount, date: currentDate.dateTimeString)
             statisticService.store(my: gameResult)
-            let message = "Ваш результат: \(correctAnswers)/10 \n" +
+            let message = "Ваш результат: \(presenter.correctAnswers)/10 \n" +
             "Количество сыгранных квизов: \(statisticService.gamesCount)\n" +
             "Рекорд: \(statisticService.bestGame.correct)/10 (\(statisticService.bestGame.date))\n" +
             "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
@@ -98,8 +95,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
             buttonText: "Сыграть ещё раз",
             completion: {[weak self] _ in
                 guard let self = self else { return }
-                presenter.resetQuestionIndex() 
-                self.correctAnswers = 0
+                presenter.restartGame()
                 
                 guard let questionFactory = self.questionFactory else {
                     return
@@ -124,7 +120,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     }
     // приватный метод для показа результатов раунда квиза
     // принимает вью модель QuizResultsViewModel и ничего не возвращает!!!
-    private func show(quiz result: AlertModel) {
+    func show(quiz result: AlertModel) {
         let alert = UIAlertController(
             title: result.title,
             message: result.message,
@@ -133,8 +129,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         
         let action = UIAlertAction(title: result.buttonText, style: .default) { [weak self] _ in 
             guard let self = self else { return } 
-            presenter.resetQuestionIndex()
-            self.correctAnswers = 0
+            presenter.restartGame()
             guard let questionFactory = questionFactory else {
                 return
             }

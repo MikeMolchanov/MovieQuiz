@@ -10,6 +10,7 @@ import UIKit
 final class MovieQuizPresenter {
     
     private var currentQuestionIndex: Int = 0
+    private let statisticService: StatisticServiceProtocol = StatisticService()
     var questionFactory: QuestionFactoryProtocol?
     let questionsAmount: Int = 10
     
@@ -20,13 +21,26 @@ final class MovieQuizPresenter {
         
     func showNextQuestionOrResults() {
         if self.isLastQuestion() {
-            let text = "Вы ответили на \(correctAnswers) из 10, попробуйте ещё раз!" // ОШИБКА 1: `correctAnswers` не определено
+            let message = "Ваш результат: \(correctAnswers)/10 \n" +
+            "Количество сыгранных квизов: \(statisticService.gamesCount)\n" +
+            "Рекорд: \(statisticService.bestGame.correct)/10 (\(statisticService.bestGame.date))\n" +
+            "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%" // ОШИБКА 1: `correctAnswers` не определено
                 
-            let viewModel = QuizResultsViewModel(
+            let viewModel = AlertModel(
                 title: "Этот раунд окончен!",
-                text: text,
-                buttonText: "Сыграть ещё раз")
-                viewController?.show(result: viewModel) // ОШИБКА 2: `show(quiz:)` не определён
+                message: message,
+                buttonText: "Сыграть ещё раз",
+                completion: {[weak self] _ in
+                    guard let self = self else { return }
+                    self.restartGame()
+                    
+                    guard let questionFactory = self.questionFactory else {
+                        return
+                    }
+                    questionFactory.requestNextQuestion()
+                }
+               )
+                viewController?.show(quiz: viewModel) // ОШИБКА 2: `show(quiz:)` не определён
         } else {
             self.switchToNextQuestion()
             questionFactory?.requestNextQuestion() // ОШИБКА 3: `questionFactory` не определено
@@ -41,7 +55,7 @@ final class MovieQuizPresenter {
         currentQuestion = question
         let viewModel = convert(model: question)
         DispatchQueue.main.async { [weak self] in
-            self?.viewController?.show(quiz: viewModel)
+            self?.viewController?.show(step: viewModel)
         }
     }
     
@@ -66,9 +80,15 @@ final class MovieQuizPresenter {
     func isLastQuestion() -> Bool {
         currentQuestionIndex == questionsAmount - 1
     }
+    
+    func didAnswer(isCorrectAnswer: Bool) {
+        if isCorrectAnswer == true {
+            correctAnswers += 1}
+    }
         
-    func resetQuestionIndex() {
+    func restartGame() {
         currentQuestionIndex = 0
+        correctAnswers = 0
     }
         
     func switchToNextQuestion() {
