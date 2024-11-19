@@ -48,7 +48,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     }
     
     // приватный метод вывода на экран вопроса, который принимает на вход вью модель вопроса и ничего не возвращает
-    private func show(quiz step: QuizStepViewModel) {
+    func show(quiz step: QuizStepViewModel) {
         imageView.image = step.image
         imageView.layer.borderWidth = 0
         textLabel.text = step.question
@@ -76,7 +76,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in // слабая ссылка на self
             guard let self = self else { return } // разворачиваем слабую ссылку
             // код, который мы хотим вызвать через 1 секунду
-            self.showNextQuestionOrResults()
+            self.presenter.correctAnswers = self.correctAnswers
+            self.presenter.questionFactory = self.questionFactory
+            self.presenter.showNextQuestionOrResults()
         }
     }
     // приватный метод, который содержит логику перехода в один из сценариев
@@ -145,11 +147,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        presenter.currentQuestion = currentQuestion
         presenter.noButtonClicked()
     }
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-            presenter.currentQuestion = currentQuestion
             presenter.yesButtonClicked()
     }
     
@@ -184,15 +184,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate  
     }
     // MARK: - QuestionFactoryDelegate
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        guard let question = question else {
-            return
-        }
-        currentQuestion = question
-        let viewModel = presenter.convert(model: question)
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.show(quiz: viewModel)
-        }
+        presenter.didReceiveNextQuestion(question: question)
     }
 }
 
