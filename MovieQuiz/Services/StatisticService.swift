@@ -30,7 +30,7 @@ final class StatisticService: StatisticServiceProtocol {
         get {
             let correct: Int = storage.integer(forKey: Keys.correct.rawValue)
             let total: Int = storage.integer(forKey: Keys.total.rawValue)
-            let date: Date = storage.object(forKey: Keys.total.rawValue) as? Date ?? Date()
+            let date: Date = storage.object(forKey: Keys.date.rawValue) as? Date ?? Date()
                     
             return GameResult(correct: correct, total: total, date: date.dateTimeString)
         }

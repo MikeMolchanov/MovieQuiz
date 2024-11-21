@@ -1,6 +1,7 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController  {
+final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol{
+    
     
     private var presenter: MovieQuizPresenter!
     private let alertPresenter: AlertPresenterProtocol = AlertPresenter()
@@ -37,29 +38,6 @@ final class MovieQuizViewController: UIViewController  {
         counterLabel.text = step.questionNumber
         yesButton.isEnabled = true
     }
-    // приватный метод, который меняет цвет рамки
-    // принимает на вход булевое значение и ничего не возвращает
-//    func showAnswerResult(isCorrect: Bool) {
-//        // метод красит рамку
-//        if isCorrect == true {
-//            presenter.didAnswer(isCorrectAnswer: isCorrect)
-//            imageView.layer.borderWidth = 8
-//            imageView.layer.borderColor = UIColor.ypGreen.cgColor
-//            imageView.layer.cornerRadius = 20
-//            yesButton.isEnabled = false
-//        }
-//        else {
-//            imageView.layer.borderWidth = 8
-//            imageView.layer.borderColor = UIColor.ypRed.cgColor
-//            imageView.layer.cornerRadius = 20
-//            yesButton.isEnabled = false
-//        }
-//        // запускаем задачу через 1 секунду c помощью диспетчера задач
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in // слабая ссылка на self
-//            guard let self = self else { return } // разворачиваем слабую ссылку
-//            // код, который мы хотим вызвать через 1 секунду
-//            self.presenter.showNextQuestionOrResults()
-//    }
     
         
     func highlightImageBorder(isCorrectAnswer: Bool) {
@@ -68,41 +46,6 @@ final class MovieQuizViewController: UIViewController  {
             imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
     }
         
-    
-    
-    // приватный метод, который содержит логику перехода в один из сценариев
-    // метод ничего не принимает и ничего не возвращает
-//    private func showNextQuestionOrResults() {
-//        if presenter.isLastQuestion() {
-//            let currentDate = Date()
-//            let gameResult = GameResult(correct: presenter.correctAnswers, total: presenter.questionsAmount, date: currentDate.dateTimeString)
-//            statisticService.store(my: gameResult)
-//            let message = "Ваш результат: \(presenter.correctAnswers)/10 \n" +
-//            "Количество сыгранных квизов: \(statisticService.gamesCount)\n" +
-//            "Рекорд: \(statisticService.bestGame.correct)/10 (\(statisticService.bestGame.date))\n" +
-//            "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
-//           let alertModel = AlertModel(
-//            title: "Этот раунд окончен!",
-//            message: message,
-//            buttonText: "Сыграть ещё раз",
-//            completion: {[weak self] _ in
-//                guard let self = self else { return }
-//                presenter.restartGame()
-//                
-//
-//            }
-//           )
-//            alertPresenter.show(alertModel)
-//
-//            imageView.layer.cornerRadius = 20
-//            
-//        }
-//        else {
-//            presenter.switchToNextQuestion()
-//            presenter.questionFactory?.requestNextQuestion()
-//                imageView.layer.cornerRadius = 20
-//        }
-//    }
     // приватный метод для показа результатов раунда квиза
     // принимает вью модель QuizResultsViewModel и ничего не возвращает!!!
     func show(quiz result: AlertModel) {
