@@ -11,11 +11,10 @@ struct GameResult {
     var total: Int //количество вопросов квиза
     var date: String
     
-    func isBetterThan(another:GameResult, statisticServiceInstance: StatisticService ) {
+    func isBetterThan(another:GameResult)-> Bool {
         if self.correct > another.correct {
-            statisticServiceInstance.bestGame.correct = self.correct
-            let currentDate = Date()
-            statisticServiceInstance.bestGame.date = currentDate.dateTimeString
+            return true
         }
+        return false
     }
 }
